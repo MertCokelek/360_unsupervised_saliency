@@ -250,13 +250,13 @@ class KLDLoss(nn.Module):
             total = loss + total.item()
         return torch.mean(total)
 
-import os
-import cv2
-a = os.listdir('./')
-for i in a:
-     img = cv2.imread('./'+i)
-     img = cv2.applyColorMap(img, 11)
-     cv2.imwrite('./'+i,img)
+# import os
+# import cv2
+# a = os.listdir('./')
+# for i in a:
+#      img = cv2.imread('./'+i)
+#      img = cv2.applyColorMap(img, 11)
+#      cv2.imwrite('./'+i,img)
 
 
 # inn this implementation we consider standatrd normalization 

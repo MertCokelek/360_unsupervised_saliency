@@ -1,19 +1,9 @@
-from functools import partial
 import numpy as np
-from numpy import random
-import time
-from skimage import exposure
 from skimage.transform import resize
-import cv2
-from model_2 import SalGAN_3, LOSS,SalGAN_4,SalGAN_2
+from model_2 import SalGAN_3, LOSS, SalGAN_4, SalGAN_2
 import re, os, glob
 import cv2
 import torch
-import scipy.misc
-from torchvision import utils
-from PIL import Image
-from attention import Sal_based_Attention_module
-from salgan import SalGAN_Generator
 
 
 def normalize(x, method='standard', axis=None):
@@ -41,26 +31,25 @@ def normalize(x, method='standard', axis=None):
             raise ValueError('method not in {"standard", "range", "sum"}')
     return res
 
+
 def CC(saliency_map1, saliency_map2):
-	map1 = np.array(saliency_map1, copy=False)
-	map2 = np.array(saliency_map2, copy=False)
-	if map1.shape != map2.shape:
-		map1 = resize(map1, map2.shape, order=3, mode='constant')
-	map1 = normalize(map1, method='standard')
-	map2 = normalize(map2, method='standard')
-	return np.corrcoef(map1.ravel(), map2.ravel())[0,1]
+    map1 = np.array(saliency_map1, copy=False)
+    map2 = np.array(saliency_map2, copy=False)
+    if map1.shape != map2.shape:
+        map1 = resize(map1, map2.shape, order=3, mode='constant')
+    map1 = normalize(map1, method='standard')
+    map2 = normalize(map2, method='standard')
+    return np.corrcoef(map1.ravel(), map2.ravel())[0, 1]
 
 
-
-#Contrastive
+# Contrastive
 
 model = SalGAN_4()
 
-weight = torch.load('./models/model_encoder:_resnet_pool_decoder:_rand_lr:_0.0001_bz:_64_opt:_Adam/ckpt_epoch_56.pth')
-#weight = torch.load('./trained_models/random_decoder/final_models/finetuned.pth')
+# weight = torch.load('./models/model_encoder:_resnet_pool_decoder:_rand_lr:_0.0001_bz:_64_opt:_Adam/ckpt_epoch_56.pth')
+weight = torch.load('./trained_models/random_decoder/final_models/finetuned.pth')
 
 model.load_state_dict(weight['model'], strict=True)
-
 
 """
 #Salgan
@@ -80,19 +69,16 @@ model.load_state_dict(weight['state_dict'], strict=False)
 
 """
 
-
 model.cuda()
 
-
 IMG_Path = "/home/yasser/Desktop/DATA360/images/"
-#IMG_Path = "/home/yasser/Desktop/Paper_figure/images_full/"
+# IMG_Path = "/home/yasser/Desktop/Paper_figure/images_full/"
 
-#IMG_Path = "./sitzman/Test/image/"
+# IMG_Path = "./sitzman/Test/image/"
 
-#IMG_Path = "./dataset/test/images/"
+# IMG_Path = "./dataset/test/images/"
 
 image_list = os.listdir(IMG_Path)
-
 
 if not os.path.isdir('./V'):
     os.makedirs('./V')
@@ -100,21 +86,20 @@ if not os.path.isdir('./V'):
 if not os.path.isdir('./saliency'):
     os.makedirs('./saliency')
 
-
 print(image_list)
 # i =80
 for img in image_list:
     image_path = IMG_Path + img
     print(img)
     ori = cv2.imread(image_path)
-    inpt = cv2.resize(ori,(320, 160))
+    inpt = cv2.resize(ori, (320, 160))
 
     inpt = np.float32(inpt)
-    #inpt-=[0.485, 0.456, 0.406]
+    # inpt-=[0.485, 0.456, 0.406]
     inpt = torch.cuda.FloatTensor(inpt)
 
     inpt = inpt.permute(2, 0, 1)
-    
+
     inpt = torch.cuda.FloatTensor(inpt)
 
     with torch.no_grad():
@@ -123,9 +108,9 @@ for img in image_list:
     Output = saliency_map
     Output = (Output.cpu()).detach().numpy()
     Output = Output.squeeze()
-    Output = resize(Output, (1024,2048))
-    np.save('./V/'+img[:-4]+'.npy',Output)
-    cv2.imwrite('./saliency/'+img[:-4]+'.png',(Output-Output.min())*255/(Output.max()-Output.min()))
+    Output = resize(Output, (1024, 2048))
+    np.save('./V/' + img[:-4] + '.npy', Output)
+    cv2.imwrite('./saliency/' + img[:-4] + '.png', (Output - Output.min()) * 255 / (Output.max() - Output.min()))
 
 """
 EPSILON = np.finfo('float').eps
@@ -322,6 +307,3 @@ for i in range(0,65):
     clean_z[i] = clean_z[i][:850,:]
 
 """
-
-
-

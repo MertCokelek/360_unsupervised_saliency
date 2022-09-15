@@ -12,3 +12,4 @@ check_augment/
 evaluate.zip
 run_main.sh
 weight_viz.py
+*.pth
