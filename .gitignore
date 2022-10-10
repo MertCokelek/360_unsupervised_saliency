@@ -13,3 +13,4 @@ evaluate.zip
 run_main.sh
 weight_viz.py
 *.pth
+/Saliency/mert/pretrained/

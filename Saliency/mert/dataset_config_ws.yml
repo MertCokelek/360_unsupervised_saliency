@@ -1,0 +1,17 @@
+koc: True  # Should be False if running in AIST.
+use_matlabGT: False
+train_bs: 4
+val_bs: 8
+num_workers: 4
+
+w: 320  # I don't recommend changing the ERP resolution.
+h: 160
+
+path_frames: "/home/mertcokelek/Cluster/datasets/VR-Eyetracking/frames"
+path_gts: "/home/mertcokelek/Desktop/OmniSal/VR-EyeTracking/fix_density_map"
+path_gtf: "/home/mertcokelek/Desktop/OmniSal/VR-EyeTracking/fixation_downsampled_480_960"
+path_split: "/home/mertcokelek/OmniSal/saliency/dataset/vreyetracking"
+path_depth: "/home/mertcokelek/Datasets/VR-EyeTracking/dpt_monodepth"
+
+name: "VR-EyeTracking"
+ema: False # Load consecutive frames in a time window.
